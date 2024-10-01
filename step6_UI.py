@@ -127,3 +127,6 @@ def main_script():
     save_final_high_prob_users(high_prob_real_usernames)
 
     interrogate_final_table()
+
+
+main_script()
