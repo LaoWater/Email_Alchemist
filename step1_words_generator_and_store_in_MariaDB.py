@@ -71,7 +71,7 @@ def filter_and_store_english_words(cur, valid_words, table_name, word_len):
             print(f"Valid Word found! {word} at count {count}")
 
             # Insert the valid word and count into the database
-            cur.execute(f"INSERT INTO {table_name} (word, NoOfLetters) VALUES (%s, %s)", (word, word_len))
+            cur.execute(f"INSERT IGNORE INTO {table_name} (word, NoOfLetters) VALUES (%s, %s)", (word, word_len))
 
 
 def load_offensive_words():
@@ -116,3 +116,5 @@ def regenerate_data(min_letters, max_letters):
 
     end_time = time.time() - start_time
     print(f"Compute Time: {end_time} seconds")
+
+

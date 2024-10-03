@@ -25,10 +25,10 @@
 import time
 from step2_MariaDB_database_engine import (connect_to_database, interrogate_table, \
                                            interrogate_final_table, insert_into_table, delete_table, separate_names,
-                                           regenerate_data, create_and_populate_numeric_tables,
+                                           create_and_populate_numeric_tables,
                                            interrogate_scoring_table)
 from step4_scoring_potential_records_wLLM import generate_usernames_with_AI_Scoring_agents
-import step1_words_generator_and_store_in_MariaDB
+from step1_words_generator_and_store_in_MariaDB import regenerate_data
 from step5_custom_search_engine_API import scrape_google_for_validity, save_final_high_prob_users
 import os
 
@@ -61,11 +61,12 @@ def process_user_file_and_insert_data(subdirectory=r'User Upload', file_name='Na
             insert_into_table(table_name, line)
 
 
-def regenerate_original_data(min_letters, max_letters):
+def regenerate_original_data(min_letters=3, max_letters=5):
     # Provide Min&Max Number of Letters.
     create_and_populate_numeric_tables()
-    step1_words_generator_and_store_in_MariaDB.regenerate_data(min_letters, max_letters)
-    regenerate_data()
+    regenerate_data(min_letters, max_letters)
+    separate_names()
+    # regenerate_data()
 
 
 ###################################
@@ -77,10 +78,17 @@ def regenerate_original_data(min_letters, max_letters):
 # To Be Implemented in GUI #
 ################
 
+# Number of raw generate usernames to be then processed towards multiple-layers Filtering
+# Consider This number directly influences API calls to LLMs
 no_of_raw_generated_usernames = 50
+# User uploads file of Names and Words to be integrated in script's logic
 upload_your_own_data = False
-overwrite_existing_data = True
+# In case of User uploaded data, if User wants to strictly use his provided data and exclude original Names&Words.
+overwrite_existing_data = False
+# In case words definitions & Rules are changed or Data becomes corrupted - Regenerate Data.
 regenerate_original_datasets = False
+# Limit number of Records shown in final step - Final Production Table
+fetch_top_production_records = 10
 
 # Regenerate Original Dataset using Pre-Defined Model: Provide Min and Max Letters blueprints
 if regenerate_original_datasets:
@@ -101,6 +109,7 @@ if upload_your_own_data:
 ########################
 ########################
 
+
 def main_script():
     # Generate usernames based on chosen Dataset and Email Patterns Neural Network
     generate_usernames_with_AI_Scoring_agents(no_of_raw=no_of_raw_generated_usernames,
@@ -109,7 +118,7 @@ def main_script():
 
     limit_ai_high_scoring_records = 5
     # Review Current High Scoring usernames
-    print(f"\nCurrent top {limit_ai_high_scoring_records} High Scoring usernames: (From all Running Cycles)")
+    print(f"\nCurrent top {limit_ai_high_scoring_records} High Scoring usernames from current cycle: ")
     interrogate_scoring_table(limit_records=limit_ai_high_scoring_records)
 
     ##################################
@@ -126,6 +135,9 @@ def main_script():
     # Final Step, Save Relevant High Probability E-mail usernames
     save_final_high_prob_users(high_prob_real_usernames)
 
+    print(f"\n\nCurrent top {fetch_top_production_records} High Scoring usernames (Final Production Table) Data: "
+          f"\naka. Top high-rated usernames gathered From all Running Cycles - "
+          f"\n~ Can be used in final confirmation to call Email Validation Service API with access to mx Records ~")
     interrogate_final_table()
 
 

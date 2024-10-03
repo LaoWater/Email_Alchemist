@@ -108,7 +108,7 @@ class EmailGenerator:
                 if element_type in ["year", "number"] and any(el[0] in ["year", "number"] for el in elements):
                     element_type = random.choices(
                         population=["name", "word"],
-                        weights=[0.57, 0.43],
+                        weights=[0.57, 0.43],processed_username
                         k=1
                     )[0]
 
@@ -141,7 +141,8 @@ class EmailGenerator:
             email_username_parts.append(element[1])
 
             # Apply separator logic
-            if i < len(elements) - 1:  # Don't add a separator after the last element
+            # Setting separator for generating valid google accounts (it no longer accepts "_")
+            if i < len(elements) - 1 and False:  # Don't add a separator after the last element
                 if not separator_added:
                     # First separator has a 65% chance of being added
                     add_separator = random.random() < 0.65
@@ -233,3 +234,4 @@ if __name__ == "__main__":
     generated_usernames = generate_usernames(10)
 
     print(generated_usernames)
+

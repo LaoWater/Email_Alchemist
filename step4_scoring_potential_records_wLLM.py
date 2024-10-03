@@ -235,7 +235,9 @@ def generate_usernames_with_AI_Scoring_agents(no_of_raw, no_of_sorted):
         if idx < no_of_sorted:
             top_usernames.append((username, avg_score))
 
+    time.sleep(1.5)
     print(f"Calculated High-Performing usernames from this cycle: {top_usernames}")
+    time.sleep(2)
     ###########################
     # Connect to the database
     # Store top no_of_sorted usernames
@@ -263,6 +265,7 @@ def generate_usernames_with_AI_Scoring_agents(no_of_raw, no_of_sorted):
     conn.commit()
 
     print(f"\nInserted top {no_of_sorted} high scoring usernames into the database (high_rated_unames).")
+    time.sleep(1.44)
 
     # Close the database connection
     cursor.close()

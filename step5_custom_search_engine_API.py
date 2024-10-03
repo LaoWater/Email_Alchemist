@@ -42,7 +42,9 @@ def interrogate_scoring_table(limit=10, table='high_rated_unames', remove_checke
     # Connect to the database
     conn = connect_to_database()
     cur = conn.cursor()
-    print(f"\nLoading Data from AI High scoring usernames \n(First Top {limit} Records)..\n")
+    print(f"\nLoading Data from AI High scoring usernames to be processed in Search Engine step"
+          f"\n(First Top {limit} Records as selected by User)..")
+    time.sleep(0.77)
     # Fetch the table data using the dynamic table name and limit
     cur.execute(f'''
     SELECT ID, username, score FROM `{table}` order by score desc LIMIT {limit};
@@ -100,7 +102,9 @@ def scrape_google_for_validity(no_of_records, remove_record_after=False, exact_s
     print(AI_high_scoring_usernames)
 
     if remove_record_after:
-        print("Remove Option ticked, usernames will be removed from Database.high_rated_unames after being processed.")
+        print("Notice! Remove Option ticked, usernames will be removed from Database.high_rated_unames "
+              "after being processed in current cycle."
+              "The ones which qualify will be saved in Final Production table.")
     # Initialize a list to store high-probability real usernames with their search results
     high_probability_real_usernames = []
 
@@ -137,13 +141,16 @@ def scrape_google_for_validity(no_of_records, remove_record_after=False, exact_s
         else:
             print(f"No search results found for {record_username}. Disregarding username..")
 
-        # Step 5: Introduce a delay of 1.5 seconds before the next iteration
-        time.sleep(1.5)
+        # Step 5: Introduce a delay before the next iteration
+        time.sleep(1.3)
 
     # Optional: Print out the saved usernames for review
-    print(f"\nTotal usernames saved: {len(high_probability_real_usernames)}")
+    print(f"\nTotal usernames saved to Final Production Table: {len(high_probability_real_usernames)}")
     for entry in high_probability_real_usernames:
         print(f"Username: {entry['username']}, Search Result Title: {entry['title']}, URL: {entry['url']}")
+        time.sleep(0.15)
+
+    time.sleep(1)
 
     return high_probability_real_usernames
 

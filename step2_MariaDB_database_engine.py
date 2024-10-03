@@ -19,7 +19,7 @@
 # dataset, enhancing the relevance and structure of the email generation process.
 # ###################################### ###################################### #
 # ###################################### ###################################### #
-
+import time
 from decimal import Decimal
 
 import mysql.connector
@@ -36,6 +36,38 @@ def connect_to_database():
         collation='utf8mb4_general_ci'  # Set a compatible collation
     )
     return db_conn
+
+
+def query_database(query):
+    """
+    Executes a custom SQL query and returns the results.
+
+    :param query: The SQL query string to be executed.
+    :return: The result of the query, if any.
+    """
+    conn = connect_to_database()
+    cur = conn.cursor()
+
+    try:
+        # Execute the provided query
+        cur.execute(query)
+
+        # If the query returns results, fetch them
+        if cur.description:
+            result = cur.fetchall()
+            # Fetch and print the column headers
+            column_names = [i[0] for i in cur.description]
+            rows = [dict(zip(column_names, row)) for row in result]
+            return rows
+
+        # Commit the transaction if needed (for insert/update/delete)
+        conn.commit()
+    except Exception as e:
+        print(f"Error executing query: {e}")
+        return None
+    finally:
+        cur.close()
+        conn.close()
 
 
 def insert_into_table(table_name, word):
@@ -73,7 +105,7 @@ def delete_table(table_name):
     conn.close()
 
 
-def drop_tables(table_name):
+def drop_table(table_name):
     """Drop and create a table with a dynamic name."""
     # Connect to the database
     conn = connect_to_database()
@@ -127,6 +159,9 @@ def interrogate_scoring_table(table='high_rated_unames', history_table='high_rat
             row_dict['score'] = float(row_dict['score'])
 
         print(row_dict)
+        time.sleep(0.25)
+
+    time.sleep(0.33)
 
     # Close the cursor and connection
     cur.close()
@@ -158,19 +193,20 @@ def interrogate_table(table):
     conn.close()
 
 
-def interrogate_final_table():
+def interrogate_final_table(top_records=10):
     # Connect to the database
     conn = connect_to_database()
     cur = conn.cursor()
 
-    print("\nCurrent Main Production Final Table: ")
+    print("Current Main Production Final Table: ")
     # Fetch the table data using the dynamic table name
-    cur.execute('''
+    cur.execute(f'''
         SELECT u1.username, u2.score, u1.search_result_title, u1.url 
         FROM high_probability_real_usernames u1
         INNER JOIN high_rated_unames_history u2 
         ON u1.username = u2.username
-        ORDER BY u2.score desc;
+        ORDER BY u2.score desc
+        LIMIT {top_records};
     ''')
 
     # Fetch and print the column headers (removing ID)
@@ -192,6 +228,7 @@ def interrogate_final_table():
         # Print in the required order
         print(f"username: {row_dict['username']}, score: {row_dict['score']:.2f}, "
               f"search_result_title: {row_dict['search_result_title']}, URL: {row_dict['url']}")
+        time.sleep(0.25)
 
     # Close the cursor and connection
     cur.close()
@@ -301,12 +338,34 @@ def create_and_populate_numeric_tables():
     conn.close()
 
 
-def regenerate_data():
+def get_all_table_definitions():
+    """Retrieves and prints the CREATE TABLE definition for each table in the database."""
+    conn = connect_to_database()
+    cursor = conn.cursor()
 
-    separate_names()
+    # Get the list of tables
+    cursor.execute("SHOW TABLES")
+    tables = cursor.fetchall()
 
-    # interrogate_table("words")
+    for (table_name,) in tables:
+        # Get the CREATE TABLE statement for each table
+        cursor.execute(f"SHOW CREATE TABLE {table_name}")
+        result = cursor.fetchone()
+        print(f"Table: {table_name}\n")
+        print(result[1])  # The CREATE TABLE statement
+        print("\n" + "-" * 60 + "\n")
+
+    cursor.close()
+    conn.close()
 
 
-# drop_tables("common_years")
-# drop_tables("common_numbers")
+def delete_all_tables():
+    drop_table('common_numbers')
+    drop_table('common_years')
+    drop_table('high_probability_real_usernames')
+    drop_table('high_rated_unames')
+    drop_table('high_rated_unames_history')
+    drop_table('names')
+    drop_table('words')
+
+# separate_names()
