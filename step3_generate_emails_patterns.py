@@ -108,7 +108,7 @@ class EmailGenerator:
                 if element_type in ["year", "number"] and any(el[0] in ["year", "number"] for el in elements):
                     element_type = random.choices(
                         population=["name", "word"],
-                        weights=[0.57, 0.43],processed_username
+                        weights=[0.57, 0.43],
                         k=1
                     )[0]
 

@@ -4,7 +4,6 @@ from step2_MariaDB_database_engine import query_database
 import random
 import time
 from selenium import webdriver
-from selenium.webdriver import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -85,6 +84,8 @@ def click_next(driver, by_method, selector):
 
 def enter_birthdate_and_gender(driver):
     """Enter birthdate and select gender."""
+    # Higher loading time for page
+    time.sleep(3 * unit_of_measurement)
     # Generate random month (1-12)
     month = str(random.randint(1, 12))
 
@@ -117,14 +118,20 @@ def enter_birthdate_and_gender(driver):
 
 
 def create_new_address(driver, username):
-    # Create New Gmail Address
-    radio_button = driver.find_element(By.XPATH, "//div[@role='radio' and @data-value='1']")
-    # Click the radio button
-    ActionChains(driver).move_to_element(radio_button).click().perform()
-    time.sleep(0.5 * unit_of_measurement)
-    # Click the next button again
-    click_next(driver, 'xpath', "//span[text()='Next']")
-    time.sleep(0.5 * unit_of_measurement)
+    # Time to load new page DOM
+    time.sleep((0.5 * unit_of_measurement))
+    try:
+        # Create New Gmail Address
+        radio_button = driver.find_element(By.XPATH, "//div[@role='radio' and @data-value='1']")
+        # Click the radio button
+        ActionChains(driver).move_to_element(radio_button).click().perform()
+        time.sleep(0.5 * unit_of_measurement)
+        # Click the next button again
+        click_next(driver, 'xpath', "//span[text()='Next']")
+        time.sleep(0.5 * unit_of_measurement)
+    except NoSuchElementException:
+        # If the radio button is not found, skip this step and continue
+        print("Custom radio button not found, moving on to next step.")
 
     ######################################################################################################
     # Google Anti_WebScraping detected - generating multiple and different pages and cannot find element #
@@ -171,6 +178,7 @@ def create_new_address(driver, username):
 
 def handle_username_availability(driver):
     try:
+        time.sleep(0.4 * unit_of_measurement)
         # Look for the message "That username is taken."
         username_taken_element = driver.find_element(By.XPATH, "//div[contains(text(), 'That username is taken')]")
 
@@ -206,8 +214,8 @@ def process_username(driver, processed_username):
 unit_of_measurement = random.uniform(0.58, 0.85)
 # User Flags
 number_of_processed_records = 2
-# Pace Coeficient - controls the time between interactions
-pace_coefficient = 0.8
+# Pace Co-efficient - controls the time between interactions
+pace_coefficient = 1
 unit_of_measurement = unit_of_measurement * pace_coefficient
 
 
@@ -230,7 +238,7 @@ def main():
         time.sleep(2)  # Adjust or remove this delay as needed
 
     # Print all results at the end
-    print("\n Results:")
+    print("\n\nResults:")
     print("\n".join(username_results))
 
     # Close the browser after processing all usernames
