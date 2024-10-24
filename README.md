@@ -87,9 +87,9 @@ This project is a tool—its responsible use lies entirely in the hands of the u
 ## Contributing
 Contributions are welcome! If you'd like to contribute to this project
 
-/*************************************************************************************************************************************************************************/
+/**********************************************************************************************************************/
 
-# BONUS: Web Scraping AI Assistant Framework (Work-in-Progress)
+## BONUS: Web Scraping AI Assistant Framework (Work-in-Progress)
 
 Imagine stepping into the shoes of a maestro, conducting a vast orchestra of **web elements, APIs, and data streams**—all harmonizing under your direction. This evolving **AI-driven web scraping assistant framework** is your baton, automating the intricacies of element location, interaction, and data extraction, while allowing you to compose high-level logic effortlessly.
 
