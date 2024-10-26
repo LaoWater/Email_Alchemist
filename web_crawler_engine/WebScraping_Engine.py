@@ -41,6 +41,7 @@ def generate_locator_strategies(outer_html=None, full_xpath=None, selector=None)
     if outer_html:
         print("📝 Parsing outer HTML to extract attributes for additional strategies.")
         soup = BeautifulSoup(outer_html, 'html.parser')
+        print(f"HTML Parsed by BeautifulSoup: {soup}")
         element = soup.find()  # Get the first (and presumably only) element
 
         if element:
