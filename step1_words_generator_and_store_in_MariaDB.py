@@ -116,5 +116,3 @@ def regenerate_data(min_letters, max_letters):
 
     end_time = time.time() - start_time
     print(f"Compute Time: {end_time} seconds")
-
-

@@ -35,6 +35,7 @@ load_dotenv()
 
 # Access the environment variables
 API_KEY = os.getenv('API_KEY')
+print(API_KEY)
 SEARCH_ENGINE_ID = os.getenv('SEARCH_ENGINE_ID')
 
 
@@ -204,3 +205,6 @@ def main():
     save_final_high_prob_users(high_prob_real_usernames)
 
     interrogate_final_table()
+
+
+print(google_search('dodo'))
